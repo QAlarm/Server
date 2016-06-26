@@ -14,25 +14,9 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#include <QtCore>
+#ifndef PARAMETER_H
+#define PARAMETER_H
 
-#include "Parameter.h"
+#define PROGRAMMNAME_KLEIN "qalarm_server"
 
-int main(int anzahlArgumente, char *argumente[])
-{
-	QCoreApplication Anwednung(anzahlArgumente, argumente);
-
-	QTranslator QtUebersetzung;
-	QTranslator AnwendungUeberstezung;
-
-	QString Uebersetzungspfgad=QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-
-	QtUebersetzung.load(QString("qt_%1").arg(QLocale::system().name()),Uebersetzungspfgad);
-	AnwendungUeberstezung.load(QString("%1_%2").arg(PROGRAMMNAME_KLEIN)
-											   .arg(QLocale::system().name()),Uebersetzungspfgad);
-
-	Anwednung.installTranslator(&QtUebersetzung);
-	Anwednung.installTranslator(&AnwendungUeberstezung);
-
-	return Anwednung.exec();
-}
+#endif // PARAMETER_H
