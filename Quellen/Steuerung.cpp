@@ -82,7 +82,7 @@ void Steuerung::KonfigGeladen()
 	qCInfo(qalarm_serverSteuerung)<<tr("Setzte Protokoll auf: \n\tKritisch: %1.\n\tWarnung: %2\n\tInfo: %3\n\tDebug: %4.").arg(Protokollkategorie->isCriticalEnabled())
 																														   .arg(Protokollkategorie->isWarningEnabled())
 																														   .arg(Protokollkategorie->isInfoEnabled())
-																														   .arg(Protokollkategorie->isDebugEnabled());
+																														   .arg(Protokollkategorie->isDebugEnabled()).toUtf8().constData();
 	qCInfo(qalarm_serverSteuerung)<<tr("Starte WSS ...");
 	QString Servername=K_Konfiguration->WertHolen(KONFIG_SERVERNAME).toString();
 	if (Servername.isEmpty())
