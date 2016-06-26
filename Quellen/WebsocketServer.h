@@ -18,6 +18,7 @@
 #define WEBSOCKETSERVER_H
 
 #include <QtCore>
+#include <QHostAddress>
 
 Q_DECLARE_LOGGING_CATEGORY(qalarm_serverWebsocketServer)
 class QWebSocketServer;
@@ -25,10 +26,13 @@ class WebsocketServer : public QObject
 {
 	Q_OBJECT
 	public:
-		explicit WebsocketServer(QObject *eltern, const QString& name);
+		explicit WebsocketServer(QObject *eltern, const QString& name,const  QString &ipAdresse,const int &anschluss,
+								 const QStringList &sslAlgorithmen,const QStringList &ssl_EK);
 
 	private:
 		QWebSocketServer*	K_Server;
+		QHostAddress		K_IPAdresse;
+		int					K_Anschluss;
 };
 
 #endif // WEBSOCKETSERVER_H

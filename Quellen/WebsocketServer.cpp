@@ -17,10 +17,29 @@
 #include "WebsocketServer.h"
 
 #include <QWebSocketServer>
+#include <QtNetwork>
 
 Q_LOGGING_CATEGORY(qalarm_serverWebsocketServer, "QAlarm Server.WebsocketServer")
-WebsocketServer::WebsocketServer(QObject *eltern, const QString &name) : QObject(eltern)
+WebsocketServer::WebsocketServer(QObject *eltern, const QString &name, const QString &ipAdresse, const int &anschluss,
+								 const QStringList &sslAlgorithmen, const QStringList &ssl_EK) : QObject(eltern)
 {
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Bereite Serversocket für %1 vor").arg(name);
 	K_Server=new QWebSocketServer(name,QWebSocketServer::SecureMode,this);
+	K_IPAdresse=QHostAddress(ipAdresse);
+	K_Anschluss=anschluss;
+	QSslConfiguration SSL;
+	QList<QSslCipher> Algorithmen;
+	QVector<QSslEllipticCurve> EK;
+
+	SSL.setProtocol(QSsl::TlsV1_2OrLater);
+
+	for (auto Eintrag : sslAlgorithmen)
+		Algorithmen.append(QSslCipher(Eintrag));
+	SSL.setCiphers(Algorithmen);
+
+	for (auto Eintrag : ssl_EK)
+		EK.append(QSslEllipticCurve::fromShortName(Eintrag));
+	SSL.setEllipticCurves(EK);
+
+	K_Server->setSslConfiguration(SSL);
 }

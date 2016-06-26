@@ -24,5 +24,9 @@
 #define KONFIG_DATEI			"/etc/qalarm/server.ini"
 #define KONFIG_PROTOKOLLEBENE	"Server/Protokollebene"
 #define KONFIG_SERVERNAME		"Server/Servername"
+#define KONFIG_IPADRESSE		"Server/IPAdresse"
+#define KONFIG_ANSCHLUSS		"Server/Anschluss"
+#define KONIFG_SSLALGORITHMEN	"Server/SSL_Algorithmen"
+#define KONFIG_SSLEK			"Server/SSL_EK"
 
 #endif // PARAMETER_H

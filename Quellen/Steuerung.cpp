@@ -85,10 +85,34 @@ void Steuerung::KonfigGeladen()
 																														   .arg(Protokollkategorie->isDebugEnabled()).toUtf8().constData();
 	qCInfo(qalarm_serverSteuerung)<<tr("Starte WSS ...");
 	QString Servername=K_Konfiguration->WertHolen(KONFIG_SERVERNAME).toString();
+	QString IPAdresse=K_Konfiguration->WertHolen(KONFIG_IPADRESSE).toString();
+	int Anschluss=K_Konfiguration->WertHolen(KONFIG_ANSCHLUSS).toInt();
+	QStringList SSL_Algorithmen=K_Konfiguration->WertHolen(KONIFG_SSLALGORITHMEN).toString().split(":");
+	QStringList SSL_EK=K_Konfiguration->WertHolen(KONFIG_SSLEK).toString().split(":");
 	if (Servername.isEmpty())
 	{
 		Beenden(-2,tr("Servername nicht gesetzt."));
 		return;
 	}
-	K_WebsocketServer=new WebsocketServer(this,Servername);
+	if (IPAdresse.isEmpty())
+	{
+		Beenden(-3,tr("IP Adresse nicht gesetzt."));
+		return;
+	}
+	if (Anschluss==0)
+	{
+		Beenden(-4,tr("Anschluss nicht gesetzt"));
+		return;
+	}
+	if (SSL_Algorithmen.isEmpty())
+	{
+		Beenden(-5,tr("Keine SSL/TLS Algorithmen gesetzt."));
+		return;
+	}
+	if (SSL_EK.isEmpty())
+	{
+		Beenden(-6,tr("Keine elliptischen Kurven für SSL/TLS gesetzt."));
+		return;
+	}
+	K_WebsocketServer=new WebsocketServer(this,Servername,IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK);
 }
