@@ -53,7 +53,7 @@ const QVariant Konfiguration::WertHolen(const QString &name,const QVariant &stan
 	{
 		if (K_Konfig->contains(name))
 		{
-			qCDebug(qalarm_Konfiguration)<<tr("%1 nicht im Puffer, lade aus Datei bzw. Standart.");
+			qCDebug(qalarm_Konfiguration)<<tr("%1 nicht im Puffer, lade aus Datei bzw. Standart.").arg(name);
 			K_Konfigpuffer.insert(name,K_Konfig->value(name,standart));
 			return K_Konfigpuffer[name];
 		}

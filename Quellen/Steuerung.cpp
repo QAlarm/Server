@@ -17,11 +17,13 @@
 #include "Steuerung.h"
 #include "Parameter.h"
 #include "Konfiguration.h"
+#include "WebsocketServer.h"
 
 Q_LOGGING_CATEGORY(qalarm_serverSteuerung, "QAlarm Server.Steuerung")
 Steuerung::Steuerung(QObject *eltern, const QString &konfigdatei):QObject(eltern)
 {
 	K_Konfiguration=Q_NULLPTR;
+	K_WebsocketServer=Q_NULLPTR;
 	K_Konfigurationsdatei=konfigdatei;
 	QTimer::singleShot(0,this,SLOT(Start()));
 }
@@ -44,8 +46,15 @@ void Steuerung::KonfigDateiNichtGefunden()
 	Beenden(-1);
 }
 
-void Steuerung::Beenden(int rueckgabe)
+void Steuerung::Beenden(const int &rueckgabe)const
 {
+	Beenden(rueckgabe,"");
+}
+
+void Steuerung::Beenden(const int rueckgabe, const QString& meldung)const
+{
+	if (!meldung.isEmpty())
+		qCCritical(qalarm_serverSteuerung)<<meldung;
 	qApp->exit(rueckgabe);
 }
 
@@ -74,5 +83,12 @@ void Steuerung::KonfigGeladen()
 																														   .arg(Protokollkategorie->isWarningEnabled())
 																														   .arg(Protokollkategorie->isInfoEnabled())
 																														   .arg(Protokollkategorie->isDebugEnabled());
-
+	qCInfo(qalarm_serverSteuerung)<<tr("Starte WSS ...");
+	QString Servername=K_Konfiguration->WertHolen(KONFIG_SERVERNAME).toString();
+	if (Servername.isEmpty())
+	{
+		Beenden(-2,tr("Servername nicht gesetzt."));
+		return;
+	}
+	K_WebsocketServer=new WebsocketServer(this,Servername);
 }

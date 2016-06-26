@@ -14,15 +14,21 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#ifndef PARAMETER_H
-#define PARAMETER_H
+#ifndef WEBSOCKETSERVER_H
+#define WEBSOCKETSERVER_H
 
-#define PROGRAMMNAME_KLEIN		"qalarm_server"
-#define PROGRAMMNAME			"QAlarm Server"
-#define VERSION					"0.0.1"
+#include <QtCore>
 
-#define KONFIG_DATEI			"/etc/qalarm/server.ini"
-#define KONFIG_PROTOKOLLEBENE	"Server/Protokollebene"
-#define KONFIG_SERVERNAME		"Server/Servername"
+Q_DECLARE_LOGGING_CATEGORY(qalarm_serverWebsocketServer)
+class QWebSocketServer;
+class WebsocketServer : public QObject
+{
+	Q_OBJECT
+	public:
+		explicit WebsocketServer(QObject *eltern, const QString& name);
 
-#endif // PARAMETER_H
+	private:
+		QWebSocketServer*	K_Server;
+};
+
+#endif // WEBSOCKETSERVER_H

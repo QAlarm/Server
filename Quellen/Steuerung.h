@@ -21,21 +21,24 @@
 
 Q_DECLARE_LOGGING_CATEGORY(qalarm_serverSteuerung)
 class Konfiguration;
+class WebsocketServer;
 class Steuerung:  public QObject
 {
 	Q_OBJECT
 	public:
-		Steuerung(QObject *eltern,const QString &konfigdatei);
+		explicit Steuerung(QObject *eltern,const QString &konfigdatei);
 
 	private Q_SLOTS:
-		void			Start();
-		void			KonfigDateiNichtGefunden();
-		void			KonfigGeladen();
+		void				Start();
+		void				KonfigDateiNichtGefunden();
+		void				KonfigGeladen();
 
 	private:
-		Konfiguration*	K_Konfiguration;
-		QString			K_Konfigurationsdatei;
-		void			Beenden(int rueckgabe=0);
+		Konfiguration*		K_Konfiguration;
+		WebsocketServer*	K_WebsocketServer;
+		QString				K_Konfigurationsdatei;
+		void				Beenden(const int &rueckgabe=0)const;
+		void				Beenden(const int rueckgabe, const QString& meldung)const;
 };
 
 #endif // STEUERUNG_H

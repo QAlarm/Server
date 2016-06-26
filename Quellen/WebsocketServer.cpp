@@ -14,15 +14,13 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#ifndef PARAMETER_H
-#define PARAMETER_H
+#include "WebsocketServer.h"
 
-#define PROGRAMMNAME_KLEIN		"qalarm_server"
-#define PROGRAMMNAME			"QAlarm Server"
-#define VERSION					"0.0.1"
+#include <QWebSocketServer>
 
-#define KONFIG_DATEI			"/etc/qalarm/server.ini"
-#define KONFIG_PROTOKOLLEBENE	"Server/Protokollebene"
-#define KONFIG_SERVERNAME		"Server/Servername"
-
-#endif // PARAMETER_H
+Q_LOGGING_CATEGORY(qalarm_serverWebsocketServer, "QAlarm Server.WebsocketServer")
+WebsocketServer::WebsocketServer(QObject *eltern, const QString &name) : QObject(eltern)
+{
+	qCDebug(qalarm_serverWebsocketServer)<<tr("Bereite Serversocket für %1 vor").arg(name);
+	K_Server=new QWebSocketServer(name,QWebSocketServer::SecureMode,this);
+}

@@ -1,4 +1,4 @@
-QT += core network
+QT += core websockets
 QT -= gui
 
 CONFIG += c++11
@@ -18,11 +18,13 @@ QMAKE_LFLAGS += -fuse-ld=gold
 
 SOURCES += Quellen/Start.cpp \
     Quellen/Steuerung.cpp \
-    Quellen/Konfiguration.cpp
+    Quellen/Konfiguration.cpp \
+    Quellen/WebsocketServer.cpp
 
 HEADERS += Quellen/Parameter.h \
     Quellen/Steuerung.h \
-    Quellen/Konfiguration.h
+    Quellen/Konfiguration.h \
+    Quellen/WebsocketServer.h
 
 DISTFILES += \
     server.ini

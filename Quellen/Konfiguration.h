@@ -24,7 +24,7 @@ class Konfiguration: public QObject
 {
 	Q_OBJECT
 	public:
-		Konfiguration(QObject *eltern, const QString &datei);
+		explicit Konfiguration(QObject *eltern, const QString &datei);
 		const QVariant			WertHolen(const QString &name);
 		const QVariant			WertHolen(const QString &name,const QVariant &standart);
 		void					WertSetzen(const QString &name, const QVariant &wert);
