@@ -16,7 +16,10 @@ RCC_DIR= tmp/rcc
 
 QMAKE_LFLAGS += -fuse-ld=gold
 
-SOURCES += Quellen/Start.cpp
+SOURCES += Quellen/Start.cpp \
+    Quellen/Steuerung.cpp \
+    Quellen/Konfiguration.cpp
 
-HEADERS += \
-    Quellen/Parameter.h
+HEADERS += Quellen/Parameter.h \
+    Quellen/Steuerung.h \
+    Quellen/Konfiguration.h

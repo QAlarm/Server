@@ -14,12 +14,27 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#ifndef PARAMETER_H
-#define PARAMETER_H
+#ifndef STEUERUNG_H
+#define STEUERUNG_H
 
-#define PROGRAMMNAME_KLEIN  "qalarm_server"
-#define PROGRAMMNAME		"QAlarm Server"
-#define VERSION				"0.0.1"
-#define KONFIG_DATEI		"/etc/qalarm/server.ini"
+#include <QtCore>
 
-#endif // PARAMETER_H
+Q_DECLARE_LOGGING_CATEGORY(qalarm_serverSteuerung)
+class Konfiguration;
+class Steuerung:  public QObject
+{
+	Q_OBJECT
+	public:
+		Steuerung(QObject *eltern,const QString &konfigdatei);
+
+	private Q_SLOTS:
+		void				Start();
+		void				KonfigDateiNichtGefunden();
+
+	private:
+		Konfiguration*	K_Konfiguration;
+		QString			K_Konfigurationsdatei;
+		void			Beenden(int rueckgabe=0);
+};
+
+#endif // STEUERUNG_H

@@ -17,10 +17,16 @@
 #include <QtCore>
 
 #include "Parameter.h"
+#include "Steuerung.h"
 
 int main(int anzahlArgumente, char *argumente[])
 {
-	QCoreApplication Anwednung(anzahlArgumente, argumente);
+	QCoreApplication Anwendung(anzahlArgumente, argumente);
+
+	Anwendung.setApplicationName(PROGRAMMNAME);
+	Anwendung.setApplicationVersion(VERSION);
+
+	QCommandLineParser Optionen;
 
 	QTranslator QtUebersetzung;
 	QTranslator AnwendungUeberstezung;
@@ -31,8 +37,28 @@ int main(int anzahlArgumente, char *argumente[])
 	AnwendungUeberstezung.load(QString("%1_%2").arg(PROGRAMMNAME_KLEIN)
 											   .arg(QLocale::system().name()),Uebersetzungspfgad);
 
-	Anwednung.installTranslator(&QtUebersetzung);
-	Anwednung.installTranslator(&AnwendungUeberstezung);
+	Anwendung.installTranslator(&QtUebersetzung);
+	Anwendung.installTranslator(&AnwendungUeberstezung);
 
-	return Anwednung.exec();
+	Optionen.setApplicationDescription(QObject::tr("%1").arg(PROGRAMMNAME));
+	Optionen.addHelpOption();
+	Optionen.addVersionOption();
+
+	QString KonfigdateiLang=QObject::tr("konfig");
+
+	Optionen.addOptions({
+							{{QObject::tr("k"),KonfigdateiLang},
+								QObject::tr("Den Namen der Konfigurationsdatei"),
+								QObject::tr("Datei"),
+								QString("%1").arg(KONFIG_DATEI)
+							}
+						});
+
+	Optionen.process(Anwendung);
+
+	QString Konfigurationsdatei=Optionen.value(KonfigdateiLang);
+
+	new Steuerung(&Anwendung,Konfigurationsdatei);
+
+	return Anwendung.exec();
 }

@@ -14,12 +14,28 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#ifndef PARAMETER_H
-#define PARAMETER_H
+#include "Konfiguration.h"
+#include "Parameter.h"
 
-#define PROGRAMMNAME_KLEIN  "qalarm_server"
-#define PROGRAMMNAME		"QAlarm Server"
-#define VERSION				"0.0.1"
-#define KONFIG_DATEI		"/etc/qalarm/server.ini"
+Q_LOGGING_CATEGORY(qalarm_serverKonfiguration, "QAlarm Server.Konfiguration")
+Konfiguration::Konfiguration(QObject *eltern, const QString &datei):QObject (eltern)
+{
+	K_Konfig=Q_NULLPTR;
+	K_Datei=datei;
+	QTimer::singleShot(0,this,SLOT(Laden()));
+}
 
-#endif // PARAMETER_H
+void Konfiguration::Laden()
+{
+	if (K_Konfig)
+		return;
+
+	qCInfo(qalarm_serverKonfiguration)<<QObject::tr("Lade Datei %1").arg(K_Datei);
+
+	if (!QFile::exists(K_Datei))
+	{
+		Q_EMIT DateiNichtGefunden();
+		return;
+	}
+	K_Konfig=new QSettings(K_Datei,QSettings::IniFormat,this);
+}
