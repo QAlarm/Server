@@ -15,4 +15,4 @@ OBJECTS_DIR= tmp/obj
 RCC_DIR= tmp/rcc
 
 
-SOURCES += Quellen/start.cpp
+SOURCES += Quellen/Start.cpp
