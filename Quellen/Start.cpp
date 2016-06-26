@@ -23,6 +23,8 @@ int main(int anzahlArgumente, char *argumente[])
 {
 	QCoreApplication Anwendung(anzahlArgumente, argumente);
 
+	QLoggingCategory::setFilterRules("*.critical=true\n.*.warning=true\n.*.info=true\n.*.debug=false");
+
 	Anwendung.setApplicationName(PROGRAMMNAME);
 	Anwendung.setApplicationVersion(VERSION);
 

@@ -17,7 +17,7 @@
 #include "Konfiguration.h"
 #include "Parameter.h"
 
-Q_LOGGING_CATEGORY(qalarm_serverKonfiguration, "QAlarm Server.Konfiguration")
+Q_LOGGING_CATEGORY(qalarm_Konfiguration, "QAlarm.Konfiguration")
 Konfiguration::Konfiguration(QObject *eltern, const QString &datei):QObject (eltern)
 {
 	K_Konfig=Q_NULLPTR;
@@ -30,7 +30,7 @@ void Konfiguration::Laden()
 	if (K_Konfig)
 		return;
 
-	qCInfo(qalarm_serverKonfiguration)<<QObject::tr("Lade Datei %1").arg(K_Datei);
+	qCInfo(qalarm_Konfiguration)<<QObject::tr("Lade Datei %1").arg(K_Datei);
 
 	if (!QFile::exists(K_Datei))
 	{
@@ -38,4 +38,34 @@ void Konfiguration::Laden()
 		return;
 	}
 	K_Konfig=new QSettings(K_Datei,QSettings::IniFormat,this);
+	K_Konfig->setIniCodec("UTF-8");
+	Q_EMIT Geladen();
 }
+const QVariant Konfiguration::WertHolen(const QString &name)
+{
+	return WertHolen(name, QVariant());
+}
+const QVariant Konfiguration::WertHolen(const QString &name,const QVariant &standart)
+{
+	if (K_Konfigpuffer.contains(name))
+		return K_Konfigpuffer[name];
+	else
+	{
+		if (K_Konfig->contains(name))
+		{
+			qCDebug(qalarm_Konfiguration)<<tr("%1 nicht im Puffer, lade aus Datei bzw. Standart.");
+			K_Konfigpuffer.insert(name,K_Konfig->value(name,standart));
+			return K_Konfigpuffer[name];
+		}
+		else
+			qCWarning(qalarm_Konfiguration)<<tr("Wert %1 nicht gefunden.").arg(name);
+	}
+	return standart;
+}
+
+void Konfiguration::WertSetzen(const QString &name,const QVariant &wert)
+{
+	K_Konfigpuffer.insert(name,wert);
+	K_Konfig->setValue(name,wert);
+}
+

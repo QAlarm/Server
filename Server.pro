@@ -23,3 +23,6 @@ SOURCES += Quellen/Start.cpp \
 HEADERS += Quellen/Parameter.h \
     Quellen/Steuerung.h \
     Quellen/Konfiguration.h
+
+DISTFILES += \
+    server.ini

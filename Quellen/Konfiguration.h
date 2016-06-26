@@ -19,22 +19,27 @@
 
 #include <QtCore>
 
-Q_DECLARE_LOGGING_CATEGORY(qalarm_serverKonfiguration)
+Q_DECLARE_LOGGING_CATEGORY(qalarm_Konfiguration)
 class Konfiguration: public QObject
 {
 	Q_OBJECT
 	public:
 		Konfiguration(QObject *eltern, const QString &datei);
+		const QVariant			WertHolen(const QString &name);
+		const QVariant			WertHolen(const QString &name,const QVariant &standart);
+		void					WertSetzen(const QString &name, const QVariant &wert);
 
 	Q_SIGNALS:
-		void		DateiNichtGefunden();
+		void					DateiNichtGefunden();
+		void					Geladen();
 
 	private Q_SLOTS:
-		void		Laden();
+		void					Laden();
 
 	private:
-		QSettings*	K_Konfig;
-		QString		K_Datei;
+		QSettings*				K_Konfig;
+		QString					K_Datei;
+		QHash<QString,QVariant>	K_Konfigpuffer;
 };
 
 #endif // KONFIGURATION_H

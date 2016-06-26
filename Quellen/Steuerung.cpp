@@ -28,22 +28,51 @@ Steuerung::Steuerung(QObject *eltern, const QString &konfigdatei):QObject(eltern
 
 void Steuerung::Start()
 {
-	qCInfo(qalarm_serverSteuerung)<<QObject::tr("Starte %1 %2").arg(PROGRAMMNAME)
-															   .arg(VERSION);
+	qCInfo(qalarm_serverSteuerung)<<tr("Starte %1 %2").arg(PROGRAMMNAME)
+													  .arg(VERSION);
 	if (!K_Konfiguration)
 	{
 		K_Konfiguration=new Konfiguration(this,K_Konfigurationsdatei);
 		connect(K_Konfiguration,&Konfiguration::DateiNichtGefunden,this,&Steuerung::KonfigDateiNichtGefunden);
+		connect(K_Konfiguration,&Konfiguration::Geladen,this,&Steuerung::KonfigGeladen);
 	}
 }
 
 void Steuerung::KonfigDateiNichtGefunden()
 {
-	qCCritical(qalarm_serverSteuerung)<<QObject::tr("Die Konfigurationsdatei konnte nicht geladen werden.");
+	qCCritical(qalarm_serverSteuerung)<<tr("Die Konfigurationsdatei konnte nicht geladen werden.");
 	Beenden(-1);
 }
 
 void Steuerung::Beenden(int rueckgabe)
 {
 	qApp->exit(rueckgabe);
+}
+
+void Steuerung::KonfigGeladen()
+{
+	QString Protokollfilter;
+	switch (K_Konfiguration->WertHolen(KONFIG_PROTOKOLLEBENE).toInt())
+	{
+		case 1:
+				Protokollfilter="*.critical=true\n*.warning=false\n*.info=false\n*.debug=false";
+				break;
+		case 2:
+				Protokollfilter="*.critical=true\n*.warning=true\n*.info=false\n*.debug=false";
+				break;
+		case 3:
+				Protokollfilter="*.critical=true\n*.warning=true\n*.info=true\n*.debug=false";
+				break;
+		case 4:
+		default:
+				Protokollfilter="*.critical=true\n*.warning=true\n*.info=true\n*.debug=true";
+				break;
+	}
+	QLoggingCategory::setFilterRules(Protokollfilter);
+	QLoggingCategory *Protokollkategorie=QLoggingCategory::defaultCategory();
+	qCInfo(qalarm_serverSteuerung)<<tr("Setzte Protokoll auf: \n\tKritisch: %1.\n\tWarnung: %2\n\tInfo: %3\n\tDebug: %4.").arg(Protokollkategorie->isCriticalEnabled())
+																														   .arg(Protokollkategorie->isWarningEnabled())
+																														   .arg(Protokollkategorie->isInfoEnabled())
+																														   .arg(Protokollkategorie->isDebugEnabled());
+
 }

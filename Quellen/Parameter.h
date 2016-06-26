@@ -17,9 +17,10 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
-#define PROGRAMMNAME_KLEIN  "qalarm_server"
-#define PROGRAMMNAME		"QAlarm Server"
-#define VERSION				"0.0.1"
-#define KONFIG_DATEI		"/etc/qalarm/server.ini"
+#define PROGRAMMNAME_KLEIN		"qalarm_server"
+#define PROGRAMMNAME			"QAlarm Server"
+#define VERSION					"0.0.1"
+#define KONFIG_DATEI			"/etc/qalarm/server.ini"
+#define KONFIG_PROTOKOLLEBENE	"Server/Protokollebene"
 
 #endif // PARAMETER_H

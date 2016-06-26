@@ -28,8 +28,9 @@ class Steuerung:  public QObject
 		Steuerung(QObject *eltern,const QString &konfigdatei);
 
 	private Q_SLOTS:
-		void				Start();
-		void				KonfigDateiNichtGefunden();
+		void			Start();
+		void			KonfigDateiNichtGefunden();
+		void			KonfigGeladen();
 
 	private:
 		Konfiguration*	K_Konfiguration;
