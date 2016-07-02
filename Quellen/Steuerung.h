@@ -32,6 +32,7 @@ class Steuerung:  public QObject
 		void				Start();
 		void				KonfigDateiNichtGefunden();
 		void				KonfigGeladen();
+		void				Fehler(const QString &text);
 
 	private:
 		Konfiguration*		K_Konfiguration;
@@ -39,6 +40,7 @@ class Steuerung:  public QObject
 		QString				K_Konfigurationsdatei;
 		void				Beenden(const int &rueckgabe=0)const;
 		void				Beenden(const int rueckgabe, const QString& meldung)const;
+		void				WebsocketKonfigurieren();
 };
 
 #endif // STEUERUNG_H

@@ -54,7 +54,7 @@ void Steuerung::Beenden(const int &rueckgabe)const
 void Steuerung::Beenden(const int rueckgabe, const QString& meldung)const
 {
 	if (!meldung.isEmpty())
-		qCCritical(qalarm_serverSteuerung)<<meldung;
+		qCCritical(qalarm_serverSteuerung)<<meldung.toUtf8().constData();
 	qApp->exit(rueckgabe);
 }
 
@@ -84,6 +84,11 @@ void Steuerung::KonfigGeladen()
 																														   .arg(Protokollkategorie->isInfoEnabled())
 																														   .arg(Protokollkategorie->isDebugEnabled()).toUtf8().constData();
 	qCInfo(qalarm_serverSteuerung)<<tr("Starte WSS ...");
+	WebsocketKonfigurieren();
+}
+
+void Steuerung::WebsocketKonfigurieren()
+{
 	QString Servername=K_Konfiguration->WertHolen(KONFIG_SERVERNAME).toString();
 	QString IPAdresse=K_Konfiguration->WertHolen(KONFIG_IPADRESSE).toString();
 	int Anschluss=K_Konfiguration->WertHolen(KONFIG_ANSCHLUSS).toInt();
@@ -133,6 +138,13 @@ void Steuerung::KonfigGeladen()
 		Beenden(-9,tr("Es wurde keine Zertifikatskette angegeben."));
 		return;
 	}
-	K_WebsocketServer=new WebsocketServer(this,Servername,IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK,
-										  SSL_Schluessel,SSL_Zertfikat,SSL_Kette);
+	K_WebsocketServer=new WebsocketServer(this,Servername);
+	connect(K_WebsocketServer,SIGNAL(Fehler(const QString&)),this,SLOT(Fehler(const QString&)));
+	K_WebsocketServer->initialisieren(IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK,SSL_Schluessel,
+									  SSL_Zertfikat,SSL_Kette);
+}
+
+void Steuerung::Fehler(const QString &text)
+{
+	Beenden(-10,text);
 }
