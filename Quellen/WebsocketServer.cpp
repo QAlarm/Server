@@ -16,14 +16,17 @@
 */
 #include "WebsocketServer.h"
 
-#include <QWebSocketServer>
 #include <QtNetwork>
+#include <QWebSocket>
 
 Q_LOGGING_CATEGORY(qalarm_serverWebsocketServer, "QAlarm Server.WebsocketServer")
 WebsocketServer::WebsocketServer(QObject *eltern, const QString &name) : QObject(eltern)
 {
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Bereite Serversocket für %1 vor").arg(name);
 	K_Server=new QWebSocketServer(name,QWebSocketServer::SecureMode,this);
+	connect(K_Server,&QWebSocketServer::sslErrors,this, &WebsocketServer::SSL_Fehler);
+	connect(K_Server,&QWebSocketServer::serverError,this,&WebsocketServer::SSL_Serverfehler);
+	connect(K_Server,&QWebSocketServer::newConnection,this,&WebsocketServer::NeuerKlient);
 }
 void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
 									 const QStringList &ssl_EK, const QString &zertifikatSchluessel,
@@ -53,6 +56,7 @@ void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschl
 		return;
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Setze SSL Konfigurration");
 	K_Server->setSslConfiguration(SSL);
+	Q_EMIT Initialisiert();
 }
 
 QFile* WebsocketServer::DateiLaden(const QString &datei,const QString &fehlertext)
@@ -67,4 +71,32 @@ QFile* WebsocketServer::DateiLaden(const QString &datei,const QString &fehlertex
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Datei %1 konnte nicht geladen werden.\n\tFehler: %2").arg(datei).arg(Datei->errorString()).toUtf8().constData();
 	Q_EMIT Fehler(fehlertext);
 	return Q_NULLPTR;
+}
+
+void WebsocketServer::SSL_Fehler(const QList<QSslError> &fehler)
+{
+	for (auto Fehler : fehler)
+		qCWarning(qalarm_serverWebsocketServer)<<tr("SSL Fehler: %1").arg(Fehler.errorString());
+}
+
+void WebsocketServer::SSL_Serverfehler(QWebSocketProtocol::CloseCode fehlerkode)
+{
+	Q_UNUSED(fehlerkode);
+	Q_EMIT Fehler(tr("Fehler beim erstellen des WSS Socket. %1").arg(K_Server->errorString()));
+}
+
+void WebsocketServer::NeuerKlient()
+{
+	QWebSocket *Klient=K_Server->nextPendingConnection();
+	qCInfo(qalarm_serverWebsocketServer)<<tr("Neuer Klient: IP: %1 Anschluss: %2").arg(Klient->peerAddress().toString())
+																				  .arg(Klient->peerPort());
+	qCDebug(qalarm_serverWebsocketServer)<<tr("Klient fordert an: %1").arg(Klient->requestUrl().toString());
+	delete Klient;
+
+}
+
+void WebsocketServer::starten()
+{
+	if (!K_Server->listen(K_IPAdresse,K_Anschluss))
+		Q_EMIT Fehler(tr("Konnte den Server nicht starten. %1").arg(K_Server->errorString()));
 }

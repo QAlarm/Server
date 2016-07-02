@@ -33,6 +33,7 @@ class Steuerung:  public QObject
 		void				KonfigDateiNichtGefunden();
 		void				KonfigGeladen();
 		void				Fehler(const QString &text);
+		void				ServerBereit();
 
 	private:
 		Konfiguration*		K_Konfiguration;

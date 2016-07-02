@@ -19,13 +19,14 @@
 #include "Konfiguration.h"
 #include "WebsocketServer.h"
 
+
 Q_LOGGING_CATEGORY(qalarm_serverSteuerung, "QAlarm Server.Steuerung")
 Steuerung::Steuerung(QObject *eltern, const QString &konfigdatei):QObject(eltern)
 {
 	K_Konfiguration=Q_NULLPTR;
 	K_WebsocketServer=Q_NULLPTR;
 	K_Konfigurationsdatei=konfigdatei;
-	QTimer::singleShot(0,this,SLOT(Start()));
+	QTimer::singleShot(0,this,&Steuerung::Start);
 }
 
 void Steuerung::Start()
@@ -139,7 +140,8 @@ void Steuerung::WebsocketKonfigurieren()
 		return;
 	}
 	K_WebsocketServer=new WebsocketServer(this,Servername);
-	connect(K_WebsocketServer,SIGNAL(Fehler(const QString&)),this,SLOT(Fehler(const QString&)));
+	connect(K_WebsocketServer,&WebsocketServer::Fehler,this,&Steuerung::Fehler);
+	connect(K_WebsocketServer,&WebsocketServer::Initialisiert,this,&Steuerung::ServerBereit);
 	K_WebsocketServer->initialisieren(IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK,SSL_Schluessel,
 									  SSL_Zertfikat,SSL_Kette);
 }
@@ -147,4 +149,9 @@ void Steuerung::WebsocketKonfigurieren()
 void Steuerung::Fehler(const QString &text)
 {
 	Beenden(-10,text);
+}
+
+void Steuerung::ServerBereit()
+{
+	K_WebsocketServer->starten();
 }

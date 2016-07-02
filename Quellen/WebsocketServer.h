@@ -19,9 +19,10 @@
 
 #include <QtCore>
 #include <QHostAddress>
+#include <QSslError>
+#include <QWebSocketServer>
 
 Q_DECLARE_LOGGING_CATEGORY(qalarm_serverWebsocketServer)
-class QWebSocketServer;
 class WebsocketServer : public QObject
 {
 	Q_OBJECT
@@ -30,8 +31,16 @@ class WebsocketServer : public QObject
 		void				initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
 										   const QStringList &ssl_EK, const QString &zertifikatSchluessel,
 										   const QString &zertifikat, const QString &zertifkatKette);
+		void				starten();
+
 	Q_SIGNALS:
 		void				Fehler(const QString &text);
+		void				Initialisiert();
+
+	private Q_SLOTS:
+		void				SSL_Fehler(const QList<QSslError> &fehler);
+		void				SSL_Serverfehler(QWebSocketProtocol::CloseCode fehlerkode);
+		void				NeuerKlient();
 
 	private:
 		QWebSocketServer*	K_Server;

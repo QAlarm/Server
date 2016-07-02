@@ -22,7 +22,7 @@ Konfiguration::Konfiguration(QObject *eltern, const QString &datei):QObject (elt
 {
 	K_Konfig=Q_NULLPTR;
 	K_Datei=datei;
-	QTimer::singleShot(0,this,SLOT(Laden()));
+	QTimer::singleShot(0,this,&Konfiguration::Laden);
 }
 
 void Konfiguration::Laden()
