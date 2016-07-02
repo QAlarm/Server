@@ -17,16 +17,19 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
-#define PROGRAMMNAME_KLEIN		"qalarm_server"
-#define PROGRAMMNAME			"QAlarm Server"
-#define VERSION					"0.0.1"
+#define PROGRAMMNAME_KLEIN				"qalarm_server"
+#define PROGRAMMNAME					"QAlarm Server"
+#define VERSION							"0.0.1"
 
-#define KONFIG_DATEI			"/etc/qalarm/server.ini"
-#define KONFIG_PROTOKOLLEBENE	"Server/Protokollebene"
-#define KONFIG_SERVERNAME		"Server/Servername"
-#define KONFIG_IPADRESSE		"Server/IPAdresse"
-#define KONFIG_ANSCHLUSS		"Server/Anschluss"
-#define KONIFG_SSLALGORITHMEN	"Server/SSL_Algorithmen"
-#define KONFIG_SSLEK			"Server/SSL_EK"
+#define KONFIG_DATEI					"/etc/qalarm/server.ini"
+#define KONFIG_PROTOKOLLEBENE			"Server/Protokollebene"
+#define KONFIG_SERVERNAME				"Server/Servername"
+#define KONFIG_IPADRESSE				"Server/IPAdresse"
+#define KONFIG_ANSCHLUSS				"Server/Anschluss"
+#define KONIFG_SSLALGORITHMEN			"SSL/Algorithmen"
+#define KONFIG_SSLEK					"SSL/EK"
+#define KONFIG_SSLZERTIFIKAT			"SSL/Zertifikat"
+#define KONFIG_SSLZERTIFIKATSCHLUESSEL  "SSL/Zertifikat Schlüssel"
+#define KONFIG_SSLZERTIFIKATKETTE		"SSL/Zertifikatskette"
 
 #endif // PARAMETER_H

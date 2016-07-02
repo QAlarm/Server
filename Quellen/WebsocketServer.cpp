@@ -21,7 +21,8 @@
 
 Q_LOGGING_CATEGORY(qalarm_serverWebsocketServer, "QAlarm Server.WebsocketServer")
 WebsocketServer::WebsocketServer(QObject *eltern, const QString &name, const QString &ipAdresse, const int &anschluss,
-								 const QStringList &sslAlgorithmen, const QStringList &ssl_EK) : QObject(eltern)
+								 const QStringList &sslAlgorithmen, const QStringList &ssl_EK, const QString &zertifikatSchluessel,
+								 const QString &zertifikat, const QString &zertifkatKette) : QObject(eltern)
 {
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Bereite Serversocket für %1 vor").arg(name);
 	K_Server=new QWebSocketServer(name,QWebSocketServer::SecureMode,this);
@@ -40,6 +41,10 @@ WebsocketServer::WebsocketServer(QObject *eltern, const QString &name, const QSt
 	for (auto Eintrag : ssl_EK)
 		EK.append(QSslEllipticCurve::fromShortName(Eintrag));
 	SSL.setEllipticCurves(EK);
+
+	SSL.setLocalCertificate(QSslCertificate(new QFile(zertifikat,this)));
+	SSL.setPrivateKey(QSslKey(new QFile(zertifikatSchluessel,this)));
+	SSL.setLocalCertificateChain(QSslCertificate::fromDevice(new QFile(zertifkatKette,this)));
 
 	K_Server->setSslConfiguration(SSL);
 }

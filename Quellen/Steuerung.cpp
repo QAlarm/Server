@@ -89,6 +89,10 @@ void Steuerung::KonfigGeladen()
 	int Anschluss=K_Konfiguration->WertHolen(KONFIG_ANSCHLUSS).toInt();
 	QStringList SSL_Algorithmen=K_Konfiguration->WertHolen(KONIFG_SSLALGORITHMEN).toString().split(":");
 	QStringList SSL_EK=K_Konfiguration->WertHolen(KONFIG_SSLEK).toString().split(":");
+	QString SSL_Zertfikat=K_Konfiguration->WertHolen(KONFIG_SSLZERTIFIKAT).toString();
+	QString SSL_Schluessel=K_Konfiguration->WertHolen(KONFIG_SSLZERTIFIKATSCHLUESSEL).toString();
+	QString SSL_Kette=K_Konfiguration->WertHolen(KONFIG_SSLZERTIFIKATKETTE).toString();
+
 	if (Servername.isEmpty())
 	{
 		Beenden(-2,tr("Servername nicht gesetzt."));
@@ -114,5 +118,21 @@ void Steuerung::KonfigGeladen()
 		Beenden(-6,tr("Keine elliptischen Kurven für SSL/TLS gesetzt."));
 		return;
 	}
-	K_WebsocketServer=new WebsocketServer(this,Servername,IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK);
+	if(SSL_Zertfikat.isEmpty())
+	{
+		Beenden(-7,tr("Kein X509 Zertifikat gesetzt."));
+		return;
+	}
+	if(SSL_Schluessel.isEmpty())
+	{
+		Beenden(-8,tr("Kein privater Schlüssel für das X509 Zertifikat gesetzt."));
+		return;
+	}
+	if(SSL_Kette.isEmpty())
+	{
+		Beenden(-9,tr("Es wurde keine Zertifikatskette angegeben."));
+		return;
+	}
+	K_WebsocketServer=new WebsocketServer(this,Servername,IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK,
+										  SSL_Schluessel,SSL_Zertfikat,SSL_Kette);
 }

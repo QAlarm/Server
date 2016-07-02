@@ -30,7 +30,7 @@ void Konfiguration::Laden()
 	if (K_Konfig)
 		return;
 
-	qCInfo(qalarm_Konfiguration)<<QObject::tr("Lade Datei %1").arg(K_Datei);
+	qCInfo(qalarm_Konfiguration)<<tr("Lade Datei %1").arg(K_Datei);
 
 	if (!QFile::exists(K_Datei))
 	{

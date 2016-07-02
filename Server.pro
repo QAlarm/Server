@@ -27,4 +27,6 @@ HEADERS += Quellen/Parameter.h \
     Quellen/WebsocketServer.h
 
 DISTFILES += \
-    server.ini
+    server.ini \
+    qalarm-server.spec \
+    srpm-bauen.sh
