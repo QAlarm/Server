@@ -1,0 +1,11 @@
+[Unit]
+Description=The QAlarm Server
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/qalarm-server
+User=qalarm
+
+[Install]
+WantedBy=multi-user.target
