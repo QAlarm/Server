@@ -31,6 +31,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_qalarm_conf}
+mkdir -p %{buildroot}%{_qt5_translationdir}
 
 install bin/qalarm-server %{buildroot}%{_bindir}
 install qalarm.service %{buildroot}%{_unitdir}
