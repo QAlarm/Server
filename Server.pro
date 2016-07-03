@@ -29,4 +29,5 @@ HEADERS += Quellen/Parameter.h \
 DISTFILES += \
     server.ini \
     qalarm-server.spec \
-    srpm-bauen.sh
+    srpm-bauen.sh \
+    qalarm.service
