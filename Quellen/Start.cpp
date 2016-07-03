@@ -18,6 +18,7 @@
 
 #include "Parameter.h"
 #include "Steuerung.h"
+#include "qalarmlib_global.h"
 
 int main(int anzahlArgumente, char *argumente[])
 {
@@ -31,16 +32,20 @@ int main(int anzahlArgumente, char *argumente[])
 	QCommandLineParser Optionen;
 
 	QTranslator QtUebersetzung;
-	QTranslator AnwendungUeberstezung;
+	QTranslator AnwendungUebersetzung;
+	QTranslator	BibliothekUebersetzung;
 
 	QString Uebersetzungspfgad=QLibraryInfo::location(QLibraryInfo::TranslationsPath);
 
 	QtUebersetzung.load(QString("qt_%1").arg(QLocale::system().name()),Uebersetzungspfgad);
-	AnwendungUeberstezung.load(QString("%1_%2").arg(PROGRAMMNAME_KLEIN)
+	AnwendungUebersetzung.load(QString("%1_%2").arg(PROGRAMMNAME_KLEIN)
 											   .arg(QLocale::system().name()),Uebersetzungspfgad);
+	BibliothekUebersetzung.load(QString("%1_%2").arg(LIBNAME)
+								.arg(QLocale::system().name()),Uebersetzungspfgad);
 
 	Anwendung.installTranslator(&QtUebersetzung);
-	Anwendung.installTranslator(&AnwendungUeberstezung);
+	Anwendung.installTranslator(&AnwendungUebersetzung);
+	Anwendung.installTranslator(&BibliothekUebersetzung);
 
 	Optionen.setApplicationDescription(QObject::tr("%1").arg(PROGRAMMNAME));
 	Optionen.addHelpOption();
