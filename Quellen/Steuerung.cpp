@@ -18,7 +18,7 @@
 #include "Parameter.h"
 #include "Konfiguration.h"
 #include "WebsocketServer.h"
-
+#include "Protokollierung.h"
 
 Q_LOGGING_CATEGORY(qalarm_serverSteuerung, "QAlarm Server.Steuerung")
 Steuerung::Steuerung(QObject *eltern, const QString &konfigdatei):QObject(eltern)
@@ -61,29 +61,9 @@ void Steuerung::Beenden(const int rueckgabe, const QString& meldung)const
 
 void Steuerung::KonfigGeladen()
 {
-	QString Protokollfilter;
-	switch (K_Konfiguration->WertHolen(KONFIG_PROTOKOLLEBENE).toInt())
-	{
-		case 1:
-				Protokollfilter="*.critical=true\n*.warning=false\n*.info=false\n*.debug=false";
-				break;
-		case 2:
-				Protokollfilter="*.critical=true\n*.warning=true\n*.info=false\n*.debug=false";
-				break;
-		case 3:
-				Protokollfilter="*.critical=true\n*.warning=true\n*.info=true\n*.debug=false";
-				break;
-		case 4:
-		default:
-				Protokollfilter="*.critical=true\n*.warning=true\n*.info=true\n*.debug=true";
-				break;
-	}
-	QLoggingCategory::setFilterRules(Protokollfilter);
-	QLoggingCategory *Protokollkategorie=QLoggingCategory::defaultCategory();
-	qCInfo(qalarm_serverSteuerung)<<tr("Setzte Protokoll auf: \n\tKritisch: %1.\n\tWarnung: %2\n\tInfo: %3\n\tDebug: %4.").arg(Protokollkategorie->isCriticalEnabled())
-																														   .arg(Protokollkategorie->isWarningEnabled())
-																														   .arg(Protokollkategorie->isInfoEnabled())
-																														   .arg(Protokollkategorie->isDebugEnabled()).toUtf8().constData();
+	Protokollierung* Protollebene=new Protokollierung(K_Konfiguration->WertHolen(KONFIG_PROTOKOLLEBENE).toInt(),
+													  this);
+	Q_UNUSED(Protollebene);
 	qCInfo(qalarm_serverSteuerung)<<tr("Starte WSS ...");
 	WebsocketKonfigurieren();
 }
