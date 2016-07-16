@@ -21,11 +21,13 @@ LIBS += -lqalarm
 
 SOURCES += Quellen/Start.cpp \
     Quellen/Steuerung.cpp \
-    Quellen/WebsocketServer.cpp
+    Quellen/WebsocketServer.cpp \
+    Quellen/Benutzer.cpp
 
 HEADERS += Quellen/Parameter.h \
     Quellen/Steuerung.h \
-    Quellen/WebsocketServer.h
+    Quellen/WebsocketServer.h \
+    Quellen/Benutzer.h
 
 DISTFILES += \
     server.ini \
