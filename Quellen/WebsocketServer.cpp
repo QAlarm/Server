@@ -27,6 +27,7 @@ WebsocketServer::WebsocketServer(QObject *eltern, const QString &name) : QObject
 	connect(K_Server,&QWebSocketServer::sslErrors,this, &WebsocketServer::SSL_Fehler);
 	connect(K_Server,&QWebSocketServer::serverError,this,&WebsocketServer::SSL_Serverfehler);
 	connect(K_Server,&QWebSocketServer::newConnection,this,&WebsocketServer::NeuerKlient);
+	K_Fehler=false;
 }
 void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
 									 const QStringList &ssl_EK, const QString &zertifikatSchluessel,
@@ -59,7 +60,8 @@ void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschl
 		return;
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Setze SSL Konfigurration");
 	K_Server->setSslConfiguration(SSL);
-	Q_EMIT Initialisiert();
+	if(!K_Fehler)
+		Q_EMIT Initialisiert();
 }
 
 QFile* WebsocketServer::DateiLaden(const QString &datei,const QString &fehlertext)
@@ -72,6 +74,7 @@ QFile* WebsocketServer::DateiLaden(const QString &datei,const QString &fehlertex
 			return Datei;
 	}
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Datei %1 konnte nicht geladen werden.\n\tFehler: %2").arg(datei).arg(Datei->errorString()).toUtf8().constData();
+	K_Fehler=true;
 	Q_EMIT Fehler(fehlertext);
 	return Q_NULLPTR;
 }
@@ -94,12 +97,15 @@ void WebsocketServer::NeuerKlient()
 	qCInfo(qalarm_serverWebsocketServer)<<tr("Neuer Klient: IP: %1 Anschluss: %2").arg(Klient->peerAddress().toString())
 																				  .arg(Klient->peerPort());
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Klient fordert an: %1").arg(Klient->requestUrl().toString());
-	delete Klient;
-
+	Klient->deleteLater();
 }
 
 void WebsocketServer::starten()
 {
 	if (!K_Server->listen(K_IPAdresse,K_Anschluss))
 		Q_EMIT Fehler(tr("Konnte den Server nicht starten. %1").arg(K_Server->errorString()));
+	else
+		qCInfo(qalarm_serverWebsocketServer)<<tr("Der Server lauscht auf der Adresse %1 und dem Anschluss %2").arg(K_Server->serverAddress().toString())
+																											  .arg(K_Server->serverPort());
+
 }
