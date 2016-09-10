@@ -28,6 +28,7 @@ class WebsocketServer : public QObject
 	Q_OBJECT
 	public:
 		explicit WebsocketServer(QObject *eltern, const QString& name);
+							~WebsocketServer();
 		void				initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
 										   const QStringList &ssl_EK, const QString &zertifikatSchluessel,
 										   const QString &zertifikat, const QString &zertifkatKette);
@@ -49,6 +50,7 @@ class WebsocketServer : public QObject
 		int					K_Anschluss;
 		QFile*				DateiLaden(const QString &datei, const QString &fehlertext);
 		bool				K_Initfehler;
+		QList<QWebSocket*>	*K_Klientliste;
 };
 
 #endif // WEBSOCKETSERVER_H

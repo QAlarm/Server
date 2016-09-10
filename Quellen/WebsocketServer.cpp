@@ -29,7 +29,17 @@ WebsocketServer::WebsocketServer(QObject *eltern, const QString &name) : QObject
 	connect(K_Server,&QWebSocketServer::newConnection,this,&WebsocketServer::NeuerKlient);
 	connect(K_Server,&QWebSocketServer::acceptError,this,&WebsocketServer::Verbindungsfehler);
 	K_Initfehler=false;
+	K_Klientliste=new QList<QWebSocket*>;
 }
+WebsocketServer::~WebsocketServer()
+{
+	for (auto Klient : *K_Klientliste)
+	{
+		Klient->close(QWebSocketProtocol::CloseCodeGoingAway,tr("Der Server fährt runter."));
+		Klient->deleteLater();
+	}
+}
+
 void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
 									 const QStringList &ssl_EK, const QString &zertifikatSchluessel,
 									 const QString &zertifikat, const QString &zertifkatKette)
