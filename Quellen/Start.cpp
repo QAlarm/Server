@@ -65,7 +65,7 @@ int main(int anzahlArgumente, char *argumente[])
 
 	QString Konfigurationsdatei=Optionen.value(KonfigdateiLang);
 
-	new Steuerung(&Anwendung,Konfigurationsdatei);
+	new Steuerung(0,Konfigurationsdatei);
 
 	return Anwendung.exec();
 }
