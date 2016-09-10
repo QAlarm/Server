@@ -48,9 +48,12 @@ void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschl
 		EK.append(QSslEllipticCurve::fromShortName(Eintrag));
 	SSL.setEllipticCurves(EK);
 
+	QFile *Datei;
 	SSL.setLocalCertificate(QSslCertificate(DateiLaden(zertifikat,tr("Zertifikat %1 konnte nicht geladen werden.").arg(zertifikat))));
 	SSL.setPrivateKey(QSslKey(DateiLaden(zertifikatSchluessel,tr("Der Schlüssel %1 für das Zertifikat konnte nicht geladen werden.").arg(zertifikatSchluessel))));
-	SSL.setLocalCertificateChain(QSslCertificate::fromDevice(DateiLaden(zertifkatKette,tr("Die Zertifikatskette %1 konnte nicht geladen werden.").arg(zertifkatKette))));
+	Datei=DateiLaden(zertifkatKette,tr("Die Zertifikatskette %1 konnte nicht geladen werden.").arg(zertifkatKette));
+	if(Datei)
+		SSL.setLocalCertificateChain(QSslCertificate::fromDevice(Datei));
 
 	if(SSL.privateKey().isNull() || SSL.localCertificate().isNull() || SSL.localCertificateChain().isEmpty())
 		return;
