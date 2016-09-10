@@ -27,7 +27,7 @@ WebsocketServer::WebsocketServer(QObject *eltern, const QString &name) : QObject
 	connect(K_Server,&QWebSocketServer::sslErrors,this, &WebsocketServer::SSL_Fehler);
 	connect(K_Server,&QWebSocketServer::serverError,this,&WebsocketServer::SSL_Serverfehler);
 	connect(K_Server,&QWebSocketServer::newConnection,this,&WebsocketServer::NeuerKlient);
-	K_Fehler=false;
+	K_Initfehler=false;
 }
 void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
 									 const QStringList &ssl_EK, const QString &zertifikatSchluessel,
@@ -60,7 +60,7 @@ void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschl
 		return;
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Setze SSL Konfigurration");
 	K_Server->setSslConfiguration(SSL);
-	if(!K_Fehler)
+	if(!K_Initfehler)
 		Q_EMIT Initialisiert();
 }
 
@@ -74,7 +74,7 @@ QFile* WebsocketServer::DateiLaden(const QString &datei,const QString &fehlertex
 			return Datei;
 	}
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Datei %1 konnte nicht geladen werden.\n\tFehler: %2").arg(datei).arg(Datei->errorString()).toUtf8().constData();
-	K_Fehler=true;
+	K_Initfehler=true;
 	Q_EMIT Fehler(fehlertext);
 	return Q_NULLPTR;
 }

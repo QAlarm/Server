@@ -47,7 +47,7 @@ class WebsocketServer : public QObject
 		QHostAddress		K_IPAdresse;
 		int					K_Anschluss;
 		QFile*				DateiLaden(const QString &datei, const QString &fehlertext);
-		bool				K_Fehler;
+		bool				K_Initfehler;
 };
 
 #endif // WEBSOCKETSERVER_H
