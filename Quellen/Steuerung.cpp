@@ -44,7 +44,7 @@ void Steuerung::Start()
 void Steuerung::KonfigDateiNichtGefunden()
 {
 	qCCritical(qalarm_serverSteuerung)<<tr("Die Konfigurationsdatei konnte nicht geladen werden.");
-	Beenden(-1);
+	Beenden(1);
 }
 
 void Steuerung::Beenden(const int &rueckgabe)const
@@ -81,42 +81,42 @@ void Steuerung::WebsocketKonfigurieren()
 
 	if (Servername.isEmpty())
 	{
-		Beenden(-2,tr("Servername nicht gesetzt."));
+		Beenden(2,tr("Servername nicht gesetzt."));
 		return;
 	}
 	if (IPAdresse.isEmpty())
 	{
-		Beenden(-3,tr("IP Adresse nicht gesetzt."));
+		Beenden(3,tr("IP Adresse nicht gesetzt."));
 		return;
 	}
 	if (Anschluss==0)
 	{
-		Beenden(-4,tr("Anschluss nicht gesetzt"));
+		Beenden(4,tr("Anschluss nicht gesetzt"));
 		return;
 	}
 	if (SSL_Algorithmen.isEmpty())
 	{
-		Beenden(-5,tr("Keine SSL/TLS Algorithmen gesetzt."));
+		Beenden(5,tr("Keine SSL/TLS Algorithmen gesetzt."));
 		return;
 	}
 	if (SSL_EK.isEmpty())
 	{
-		Beenden(-6,tr("Keine elliptischen Kurven für SSL/TLS gesetzt."));
+		Beenden(6,tr("Keine elliptischen Kurven für SSL/TLS gesetzt."));
 		return;
 	}
 	if(SSL_Zertfikat.isEmpty())
 	{
-		Beenden(-7,tr("Kein X509 Zertifikat gesetzt."));
+		Beenden(7,tr("Kein X509 Zertifikat gesetzt."));
 		return;
 	}
 	if(SSL_Schluessel.isEmpty())
 	{
-		Beenden(-8,tr("Kein privater Schlüssel für das X509 Zertifikat gesetzt."));
+		Beenden(8,tr("Kein privater Schlüssel für das X509 Zertifikat gesetzt."));
 		return;
 	}
 	if(SSL_Kette.isEmpty())
 	{
-		Beenden(-9,tr("Es wurde keine Zertifikatskette angegeben."));
+		Beenden(9,tr("Es wurde keine Zertifikatskette angegeben."));
 		return;
 	}
 	K_WebsocketServer=new WebsocketServer(this,Servername);
@@ -128,7 +128,7 @@ void Steuerung::WebsocketKonfigurieren()
 
 void Steuerung::Fehler(const QString &text)
 {
-	Beenden(-10,text);
+	Beenden(10,text);
 }
 
 void Steuerung::ServerBereit()
