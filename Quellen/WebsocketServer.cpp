@@ -50,17 +50,18 @@ void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschl
 		EK.append(QSslEllipticCurve::fromShortName(Eintrag));
 	SSL.setEllipticCurves(EK);
 
-	QFile *Datei;
-	SSL.setLocalCertificate(QSslCertificate(DateiLaden(zertifikat,tr("Zertifikat %1 konnte nicht geladen werden.").arg(zertifikat))));
-	SSL.setPrivateKey(QSslKey(DateiLaden(zertifikatSchluessel,tr("Der Schlüssel %1 für das Zertifikat konnte nicht geladen werden.").arg(zertifikatSchluessel))));
-	Datei=DateiLaden(zertifkatKette,tr("Die Zertifikatskette %1 konnte nicht geladen werden.").arg(zertifkatKette));
-	if(Datei)
-		SSL.setLocalCertificateChain(QSslCertificate::fromDevice(Datei));
+	QList<QSslCertificate> Zertifikate;
+	Zertifikate=QSslCertificate::fromDevice(DateiLaden(zertifikat,tr("Zertifikat %1 konnte nicht geladen werden.").arg(zertifikat)));
+	Zertifikate.append(QSslCertificate::fromDevice(DateiLaden(zertifkatKette,tr("Die Zertifikatskette %1 konnte nicht geladen werden.").arg(zertifkatKette))));
+	SSL.setLocalCertificateChain(Zertifikate);
+
+	SSL.setPrivateKey(QSslKey(DateiLaden(zertifikatSchluessel,tr("Der Schlüssel %1 für das Zertifikat konnte nicht geladen werden.").arg(zertifikatSchluessel)),QSsl::Rsa));
 
 	if(SSL.privateKey().isNull() || SSL.localCertificate().isNull() || SSL.localCertificateChain().isEmpty())
 		return;
-	qCDebug(qalarm_serverWebsocketServer)<<tr("Setze SSL Konfigurration");
+	qCDebug(qalarm_serverWebsocketServer)<<tr("Setze SSL Konfiguration");
 	K_Server->setSslConfiguration(SSL);
+
 	if(!K_Initfehler)
 		Q_EMIT Initialisiert();
 }
