@@ -27,6 +27,7 @@ WebsocketServer::WebsocketServer(QObject *eltern, const QString &name) : QObject
 	connect(K_Server,&QWebSocketServer::sslErrors,this, &WebsocketServer::SSL_Fehler);
 	connect(K_Server,&QWebSocketServer::serverError,this,&WebsocketServer::SSL_Serverfehler);
 	connect(K_Server,&QWebSocketServer::newConnection,this,&WebsocketServer::NeuerKlient);
+	connect(K_Server,&QWebSocketServer::acceptError,this,&WebsocketServer::Verbindungsfehler);
 	K_Initfehler=false;
 }
 void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
@@ -107,5 +108,10 @@ void WebsocketServer::starten()
 	else
 		qCInfo(qalarm_serverWebsocketServer)<<tr("Der Server lauscht auf der Adresse %1 und dem Anschluss %2").arg(K_Server->serverAddress().toString())
 																											  .arg(K_Server->serverPort());
+}
 
+void WebsocketServer::Verbindungsfehler(QAbstractSocket::SocketError fehler)
+{
+	qCDebug(qalarm_serverWebsocketServer)<<tr("Fehler beim Verbínungsaufbau: %1 %2").arg(fehler)
+																					.arg(K_Server->errorString());
 }

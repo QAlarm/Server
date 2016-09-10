@@ -41,6 +41,7 @@ class WebsocketServer : public QObject
 		void				SSL_Fehler(const QList<QSslError> &fehler);
 		void				SSL_Serverfehler(QWebSocketProtocol::CloseCode fehlerkode);
 		void				NeuerKlient();
+		void				Verbindungsfehler(QAbstractSocket::SocketError fehler);
 
 	private:
 		QWebSocketServer*	K_Server;
