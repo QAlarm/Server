@@ -1,4 +1,4 @@
-QT += core websockets
+QT += core
 QT -= gui
 
 isEmpty(LOKAL) {
