@@ -1,0 +1,2 @@
+#!/bin/bash
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/C++/QAlarm/Lib/bin bin/qalarm-server -k ~/C++/QAlarm/Server/bin/server.ini
