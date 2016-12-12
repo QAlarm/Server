@@ -36,6 +36,7 @@ class Steuerung:  public QObject
 		void				ServerBereit();
 
 	private:
+		Q_DISABLE_COPY(Steuerung)
 		Konfiguration*		K_Konfiguration;
 		WebsocketServer*	K_WebsocketServer;
 		QString				K_Konfigurationsdatei;

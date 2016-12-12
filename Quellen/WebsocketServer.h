@@ -45,6 +45,7 @@ class WebsocketServer : public QObject
 		void				Verbindungsfehler(QAbstractSocket::SocketError fehler);
 
 	private:
+		Q_DISABLE_COPY(WebsocketServer)
 		QWebSocketServer*	K_Server;
 		QHostAddress		K_IPAdresse;
 		int					K_Anschluss;
