@@ -34,4 +34,10 @@
 #define KONFIG_SSLZERTIFIKATSCHLUESSEL  "SSL/Zertifikat Schluessel"
 #define KONFIG_SSLZERTIFIKATKETTE		"SSL/Zertifikatskette"
 
+#define KONFIG_SMTP_SERVER				"SMTP/Server"
+#define KONFIG_SMTP_PORT				"SMTP/Port"
+#define KONFIG_SMTP_NUTZER				"SMTP/Nutzer"
+#define KONFIG_SMTP_PASSWORT			"SMTP/Passwort"
+#define KONFIG_SMTP_ABSENDER			"SMTP/Absender"
+
 #endif // PARAMETER_H
