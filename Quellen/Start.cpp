@@ -24,13 +24,19 @@
 #include <sys/signal.h>
 void Unix_Signale()
 {
-	struct sigaction Signal_term;
+	struct sigaction Signal_term, Signal_int;
 	Signal_term.sa_handler = Steuerung::Unix_Signal_Bearbeitung_term;
-		sigemptyset(&Signal_term.sa_mask);
-		Signal_term.sa_flags |= SA_RESTART;
+	sigemptyset(&Signal_term.sa_mask);
+	Signal_term.sa_flags |= SA_RESTART;
 
-		if (sigaction(SIGTERM, &Signal_term, 0) != 0)
-		   qFatal(QObject::tr("Konnte das 'Term' Signal nicht vorbereiten.").toUtf8().constData());
+	Signal_int.sa_handler = Steuerung::Unix_Signal_Bearbeitung_int;
+	sigemptyset(&Signal_int.sa_mask);
+	Signal_int.sa_flags |= SA_RESTART;
+
+	if (sigaction(SIGTERM, &Signal_term, 0) != 0)
+		qFatal(QObject::tr("Konnte das 'TERM' Signal nicht vorbereiten.").toUtf8().constData());
+	if (sigaction(SIGINT,&Signal_int,0) !=0)
+		qFatal(QObject::tr("Konnte das 'INT' Signal nicht vorbereiten.").toUtf8().constData());
 }
 #endif
 

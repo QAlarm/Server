@@ -33,11 +33,15 @@ Steuerung::Steuerung(QObject *eltern, const QString &konfigdatei):QObject(eltern
 	K_Konfigurationsdatei=konfigdatei;
 
 #ifdef Q_OS_UNIX
-
 	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, K_Unix_Signal_term))
-	   qFatal(tr("Konnte das 'Term' Signal nicht anschließen.").toUtf8().constData());
+	   qFatal(tr("Konnte das 'TEM' Signal nicht anschließen.").toUtf8().constData());
 	K_Socket_Signal_term=new QSocketNotifier(K_Unix_Signal_term[1], QSocketNotifier::Read, this);
 	connect(K_Socket_Signal_term, &QSocketNotifier::activated,this, &Steuerung::Qt_Bearbeitung_Unix_Signal_term);
+
+	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, K_Unix_Signal_int))
+	   qFatal(tr("Konnte das 'INT' Signal nicht anschließen.").toUtf8().constData());
+	K_Socket_Signal_int=new QSocketNotifier(K_Unix_Signal_int[1], QSocketNotifier::Read, this);
+	connect(K_Socket_Signal_int, &QSocketNotifier::activated,this, &Steuerung::Qt_Bearbeitung_Unix_Signal_int);
 #endif
 	QTimer::singleShot(0,this,&Steuerung::Start);
 }
@@ -156,10 +160,18 @@ void Steuerung::ServerBereit()
 #ifdef Q_OS_UNIX
 void Steuerung::Unix_Signal_Bearbeitung_term(int nichtBenutzt)
 {
-	qCDebug(qalarm_serverSteuerung)<<"Beenden via Unix Signal.";
+	qCDebug(qalarm_serverSteuerung)<<"Beenden via Unix Signal TERM.";
 	Q_UNUSED(nichtBenutzt);
 	char tmp = 1;
 	::write(K_Unix_Signal_term[0], &tmp, sizeof(tmp));
+}
+
+void Steuerung::Unix_Signal_Bearbeitung_int(int nichtBenutzt)
+{
+	qCDebug(qalarm_serverSteuerung)<<"Beenden via Unix Signal INT.";
+	Q_UNUSED(nichtBenutzt);
+	char tmp = 1;
+	::write(K_Unix_Signal_int[0], &tmp, sizeof(tmp));
 }
 
 void Steuerung::Qt_Bearbeitung_Unix_Signal_term()
@@ -169,6 +181,16 @@ void Steuerung::Qt_Bearbeitung_Unix_Signal_term()
 	::read(K_Unix_Signal_term[1], &tmp, sizeof(tmp));
 	Ende();
 }
+
+void Steuerung::Qt_Bearbeitung_Unix_Signal_int()
+{
+	K_Socket_Signal_int->setEnabled(false);
+	char tmp;
+	::read(K_Unix_Signal_int[1], &tmp, sizeof(tmp));
+	Ende();
+}
+
 int Steuerung::K_Unix_Signal_term[2]={0};
+int Steuerung::K_Unix_Signal_int[2]={0};
 #endif
 ;

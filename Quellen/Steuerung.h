@@ -29,6 +29,7 @@ class Steuerung:  public QObject
 		explicit Steuerung(QObject *eltern,const QString &konfigdatei);
 #ifdef Q_OS_UNIX
 		static void			Unix_Signal_Bearbeitung_term(int nichtBenutzt);
+		static void			Unix_Signal_Bearbeitung_int(int nichtBenutzt);
 #endif
 
 	private Q_SLOTS:
@@ -39,6 +40,7 @@ class Steuerung:  public QObject
 		void				ServerBereit();
 #ifdef Q_OS_UNIX
 		void				Qt_Bearbeitung_Unix_Signal_term();
+		void				Qt_Bearbeitung_Unix_Signal_int();
 #endif
 
 	private:
@@ -52,7 +54,9 @@ class Steuerung:  public QObject
 		void				Ende();
 #ifdef Q_OS_UNIX
 		static int			K_Unix_Signal_term[2];
+		static int			K_Unix_Signal_int[2];
 		QSocketNotifier*	K_Socket_Signal_term;
+		QSocketNotifier*	K_Socket_Signal_int;
 #endif
 };
 
