@@ -20,6 +20,20 @@
 #include "Steuerung.h"
 #include "qalarmlib_global.h"
 
+#ifdef Q_OS_UNIX
+#include <sys/signal.h>
+void Unix_Signale()
+{
+	struct sigaction Signal_term;
+	Signal_term.sa_handler = Steuerung::Unix_Signal_Bearbeitung_term;
+		sigemptyset(&Signal_term.sa_mask);
+		Signal_term.sa_flags |= SA_RESTART;
+
+		if (sigaction(SIGTERM, &Signal_term, 0) != 0)
+		   qFatal(QObject::tr("Konnte das 'Term' Signal nicht vorbereiten.").toUtf8().constData());
+}
+#endif
+
 int main(int anzahlArgumente, char *argumente[])
 {
 	QCoreApplication Anwendung(anzahlArgumente, argumente);
@@ -65,6 +79,9 @@ int main(int anzahlArgumente, char *argumente[])
 
 	QString Konfigurationsdatei=Optionen.value(KonfigdateiLang);
 
+#ifdef Q_OS_UNIX
+	Unix_Signale();
+#endif
 	new Steuerung(0,Konfigurationsdatei);
 
 	return Anwendung.exec();

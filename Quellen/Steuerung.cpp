@@ -20,12 +20,25 @@
 #include "WebsocketServer.h"
 #include "Protokollierung.h"
 
+#ifdef Q_OS_UNIX
+#include <sys/socket.h>
+#include <unistd.h>
+#endif
+
 Q_LOGGING_CATEGORY(qalarm_serverSteuerung, "QAlarm Server.Steuerung")
 Steuerung::Steuerung(QObject *eltern, const QString &konfigdatei):QObject(eltern)
 {
 	K_Konfiguration=Q_NULLPTR;
 	K_WebsocketServer=Q_NULLPTR;
 	K_Konfigurationsdatei=konfigdatei;
+
+#ifdef Q_OS_UNIX
+
+	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, K_Unix_Signal_term))
+	   qFatal(tr("Konnte das 'Term' Signal nicht anschließen.").toUtf8().constData());
+	K_Socket_Signal_term=new QSocketNotifier(K_Unix_Signal_term[1], QSocketNotifier::Read, this);
+	connect(K_Socket_Signal_term, &QSocketNotifier::activated,this, &Steuerung::Qt_Bearbeitung_Unix_Signal_term);
+#endif
 	QTimer::singleShot(0,this,&Steuerung::Start);
 }
 
@@ -39,6 +52,11 @@ void Steuerung::Start()
 		connect(K_Konfiguration,&Konfiguration::DateiNichtGefunden,this,&Steuerung::KonfigDateiNichtGefunden);
 		connect(K_Konfiguration,&Konfiguration::Geladen,this,&Steuerung::KonfigGeladen);
 	}
+}
+
+void Steuerung::Ende()
+{
+	QCoreApplication::exit();
 }
 
 void Steuerung::KonfigDateiNichtGefunden()
@@ -61,8 +79,7 @@ void Steuerung::Beenden(const int rueckgabe, const QString& meldung)const
 
 void Steuerung::KonfigGeladen()
 {
-	Protokollierung* Protollebene=new Protokollierung(K_Konfiguration->WertHolen(KONFIG_PROTOKOLLEBENE).toInt(),
-													  this);
+	Protokollierung* Protollebene=new Protokollierung(K_Konfiguration->WertHolen(KONFIG_PROTOKOLLEBENE).toInt(),this);
 	Q_UNUSED(Protollebene);
 	qCInfo(qalarm_serverSteuerung)<<tr("Starte WSS ...");
 	WebsocketKonfigurieren();
@@ -135,3 +152,23 @@ void Steuerung::ServerBereit()
 {
 	K_WebsocketServer->starten();
 }
+
+#ifdef Q_OS_UNIX
+void Steuerung::Unix_Signal_Bearbeitung_term(int nichtBenutzt)
+{
+	qCDebug(qalarm_serverSteuerung)<<"Beenden via Unix Signal.";
+	Q_UNUSED(nichtBenutzt);
+	char tmp = 1;
+	::write(K_Unix_Signal_term[0], &tmp, sizeof(tmp));
+}
+
+void Steuerung::Qt_Bearbeitung_Unix_Signal_term()
+{
+	K_Socket_Signal_term->setEnabled(false);
+	char tmp;
+	::read(K_Unix_Signal_term[1], &tmp, sizeof(tmp));
+	Ende();
+}
+int Steuerung::K_Unix_Signal_term[2]={0};
+#endif
+;

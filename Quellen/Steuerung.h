@@ -27,6 +27,9 @@ class Steuerung:  public QObject
 	Q_OBJECT
 	public:
 		explicit Steuerung(QObject *eltern,const QString &konfigdatei);
+#ifdef Q_OS_UNIX
+		static void			Unix_Signal_Bearbeitung_term(int nichtBenutzt);
+#endif
 
 	private Q_SLOTS:
 		void				Start();
@@ -34,6 +37,9 @@ class Steuerung:  public QObject
 		void				KonfigGeladen();
 		void				Fehler(const QString &text);
 		void				ServerBereit();
+#ifdef Q_OS_UNIX
+		void				Qt_Bearbeitung_Unix_Signal_term();
+#endif
 
 	private:
 		Q_DISABLE_COPY(Steuerung)
@@ -43,6 +49,11 @@ class Steuerung:  public QObject
 		void				Beenden(const int &rueckgabe=0)const;
 		void				Beenden(const int rueckgabe, const QString& meldung)const;
 		void				WebsocketKonfigurieren();
+		void				Ende();
+#ifdef Q_OS_UNIX
+		static int			K_Unix_Signal_term[2];
+		QSocketNotifier*	K_Socket_Signal_term;
+#endif
 };
 
 #endif // STEUERUNG_H
