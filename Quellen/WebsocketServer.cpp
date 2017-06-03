@@ -53,6 +53,8 @@ void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschl
 	SSL.setProtocol(QSsl::TlsV1_2OrLater);
 	SSL.setPeerVerifyMode(QSslSocket::VerifyNone);
 
+
+//BUG Das mit der Reihenfolge geht nicht
 	QSslCipher Algorithmus;
 	for (auto Eintrag : sslAlgorithmen)
 	{
@@ -63,6 +65,7 @@ void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschl
 			Algorithmen.append(Algorithmus);
 	}
 	SSL.setCiphers(Algorithmen);
+//BUG Es werden nie Kurven angeboten
 	QSslEllipticCurve Kurve;
 	for (auto Eintrag : ssl_EK)
 	{
