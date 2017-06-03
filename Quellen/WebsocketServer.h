@@ -30,7 +30,7 @@ class WebsocketServer : public QObject
 		explicit WebsocketServer(QObject *eltern, const QString& name);
 							~WebsocketServer();
 		void				initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
-										   const QStringList &ssl_EK, const QString &zertifikatSchluessel,
+										   const QStringList &ssl_EK, const QString &ssl_DH, const QString &zertifikatSchluessel,
 										   const QString &zertifikat, const QString &zertifkatKette);
 		void				starten();
 

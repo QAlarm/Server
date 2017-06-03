@@ -41,7 +41,7 @@ WebsocketServer::~WebsocketServer()
 }
 
 void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
-									 const QStringList &ssl_EK, const QString &zertifikatSchluessel,
+									 const QStringList &ssl_EK, const QString &ssl_DH, const QString &zertifikatSchluessel,
 									 const QString &zertifikat, const QString &zertifkatKette)
 {
 	K_IPAdresse=QHostAddress(ipAdresse);
@@ -51,14 +51,37 @@ void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschl
 	QVector<QSslEllipticCurve> EK;
 
 	SSL.setProtocol(QSsl::TlsV1_2OrLater);
+	SSL.setPeerVerifyMode(QSslSocket::VerifyNone);
 
+	QSslCipher Algorithmus;
 	for (auto Eintrag : sslAlgorithmen)
-		Algorithmen.append(QSslCipher(Eintrag));
+	{
+		Algorithmus=QSslCipher(Eintrag);
+		if (Algorithmus.isNull())
+			qCWarning(qalarm_serverWebsocketServer)<< tr("Algorithmus %1 wird nicht unterstützt.").arg(Eintrag);
+		else
+			Algorithmen.append(Algorithmus);
+	}
 	SSL.setCiphers(Algorithmen);
-
+	QSslEllipticCurve Kurve;
 	for (auto Eintrag : ssl_EK)
-		EK.append(QSslEllipticCurve::fromShortName(Eintrag));
+	{
+		Kurve=QSslEllipticCurve::fromShortName(Eintrag);
+		if (!Kurve.isValid())
+			qCWarning(qalarm_serverWebsocketServer)<< tr("Kurve %1 wird nicht unterstützt.").arg(Eintrag);
+		else
+			EK.append(Kurve);
+	}
 	SSL.setEllipticCurves(EK);
+
+	if(!ssl_DH.isEmpty())
+	{
+#if (QT_VERSION >= QT_VERSION_CHECK(5,8,0))
+		SSL.setDiffieHellmanParameters(QSslDiffieHellmanParameters::fromEncoded(DateiLaden(ssl_DH,tr("Die DH Parameter %1 konnten nicht geladen werden."))));
+#else
+		qCWarning(qalarm_serverWebsocketServer)<<tr("Qt kann die DH Parameter erst ab Version 5.8.0 setzen");
+#endif
+	}
 
 	QList<QSslCertificate> Zertifikate;
 	Zertifikate=QSslCertificate::fromDevice(DateiLaden(zertifikat,tr("Zertifikat %1 konnte nicht geladen werden.").arg(zertifikat)));
@@ -70,6 +93,14 @@ void WebsocketServer::initialisieren(const QString &ipAdresse, const int &anschl
 	if(SSL.privateKey().isNull() || SSL.localCertificate().isNull() || SSL.localCertificateChain().isEmpty())
 		return;
 	qCDebug(qalarm_serverWebsocketServer)<<tr("Setze SSL Konfiguration");
+	qCDebug(qalarm_serverWebsocketServer)<<tr("Privater Schlüssel: ")<<SSL.privateKey();
+	qCDebug(qalarm_serverWebsocketServer)<<tr("Zertifikate: ")<<SSL.localCertificateChain();
+#if (QT_VERSION >= QT_VERSION_CHECK(5,8,0))
+	qCDebug(qalarm_serverWebsocketServer)<<tr("DH Parameter: ")<<SSL.diffieHellmanParameters();
+#endif
+	qCDebug(qalarm_serverWebsocketServer)<<tr("Zerttest: ")<<SSL.peerVerifyMode();
+	qCDebug(qalarm_serverWebsocketServer)<<tr("Elliptische Kurven: ")<<SSL.ellipticCurves();
+	qCDebug(qalarm_serverWebsocketServer)<<tr("Algorithmen: ")<<SSL.ciphers();
 	K_Server->setSslConfiguration(SSL);
 
 	if(!K_Initfehler)

@@ -94,8 +94,9 @@ void Steuerung::WebsocketKonfigurieren()
 	QString Servername=K_Konfiguration->WertHolen(KONFIG_SERVERNAME).toString();
 	QString IPAdresse=K_Konfiguration->WertHolen(KONFIG_IPADRESSE).toString();
 	int Anschluss=K_Konfiguration->WertHolen(KONFIG_ANSCHLUSS).toInt();
-	QStringList SSL_Algorithmen=K_Konfiguration->WertHolen(KONIFG_SSLALGORITHMEN).toString().split(":");
-	QStringList SSL_EK=K_Konfiguration->WertHolen(KONFIG_SSLEK).toString().split(":");
+	QStringList SSL_Algorithmen=K_Konfiguration->WertHolen(KONIFG_SSLALGORITHMEN).toStringList();
+	QStringList SSL_EK=K_Konfiguration->WertHolen(KONFIG_SSLEK).toStringList();
+	QString SSL_DH=K_Konfiguration->WertHolen(KONFIG_SSLDH).toString();
 	QString SSL_Zertfikat=K_Konfiguration->WertHolen(KONFIG_SSLZERTIFIKAT).toString();
 	QString SSL_Schluessel=K_Konfiguration->WertHolen(KONFIG_SSLZERTIFIKATSCHLUESSEL).toString();
 	QString SSL_Kette=K_Konfiguration->WertHolen(KONFIG_SSLZERTIFIKATKETTE).toString();
@@ -143,7 +144,7 @@ void Steuerung::WebsocketKonfigurieren()
 	K_WebsocketServer=new WebsocketServer(this,Servername);
 	connect(K_WebsocketServer,&WebsocketServer::Fehler,this,&Steuerung::Fehler);
 	connect(K_WebsocketServer,&WebsocketServer::Initialisiert,this,&Steuerung::ServerBereit);
-	K_WebsocketServer->initialisieren(IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK,SSL_Schluessel,
+	K_WebsocketServer->initialisieren(IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK,SSL_DH,SSL_Schluessel,
 									  SSL_Zertfikat,SSL_Kette);
 }
 

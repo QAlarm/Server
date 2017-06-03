@@ -29,6 +29,7 @@
 #define KONIFG_SSLALGORITHMEN			"SSL/Algorithmen"
 #define KONFIG_SSLEK					"SSL/EK"
 #define KONFIG_SSLZERTIFIKAT			"SSL/Zertifikat"
+#define KONFIG_SSLDH					"SSL/DH"
 //BUG QTBUG-54510
 //#define KONFIG_SSLZERTIFIKATSCHLUESSEL  "SSL/Zertifikat Schlüssel"
 #define KONFIG_SSLZERTIFIKATSCHLUESSEL  "SSL/Zertifikat Schluessel"
