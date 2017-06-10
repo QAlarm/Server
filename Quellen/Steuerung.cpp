@@ -85,7 +85,7 @@ void Steuerung::KonfigGeladen()
 {
 	Protokollierung* Protollebene=new Protokollierung(K_Konfiguration->WertHolen(KONFIG_PROTOKOLLEBENE).toInt(),this);
 	Q_UNUSED(Protollebene);
-	qCInfo(qalarm_serverSteuerung)<<tr("Starte WSS ...");
+	qCInfo(qalarm_serverSteuerung)<<tr("Starte den Websocket ...");
 	WebsocketKonfigurieren();
 }
 
@@ -100,13 +100,14 @@ void Steuerung::WebsocketKonfigurieren()
 	QString SSL_Zertfikat=K_Konfiguration->WertHolen(KONFIG_SSLZERTIFIKAT).toString();
 	QString SSL_Schluessel=K_Konfiguration->WertHolen(KONFIG_SSLZERTIFIKATSCHLUESSEL).toString();
 	QString SSL_Kette=K_Konfiguration->WertHolen(KONFIG_SSLZERTIFIKATKETTE).toString();
+	bool SSL_Aktiv=K_Konfiguration->WertHolen(KONFIG_SSL_AKTIV).toBool();
 
 	if (Servername.isEmpty())
 	{
 		Beenden(2,tr("Servername nicht gesetzt."));
 		return;
 	}
-	if (IPAdresse.isEmpty())
+	if (IPAdresse.isEmpty() && SSL_Aktiv)
 	{
 		Beenden(3,tr("IP Adresse nicht gesetzt."));
 		return;
@@ -116,36 +117,36 @@ void Steuerung::WebsocketKonfigurieren()
 		Beenden(4,tr("Anschluss nicht gesetzt"));
 		return;
 	}
-	if (SSL_Algorithmen.isEmpty())
+	if (SSL_Algorithmen.isEmpty() && SSL_Aktiv)
 	{
 		Beenden(5,tr("Keine SSL/TLS Algorithmen gesetzt."));
 		return;
 	}
-	if (SSL_EK.isEmpty())
+	if (SSL_EK.isEmpty() && SSL_Aktiv)
 	{
 		Beenden(6,tr("Keine elliptischen Kurven für SSL/TLS gesetzt."));
 		return;
 	}
-	if(SSL_Zertfikat.isEmpty())
+	if(SSL_Zertfikat.isEmpty() && SSL_Aktiv)
 	{
 		Beenden(7,tr("Kein X509 Zertifikat gesetzt."));
 		return;
 	}
-	if(SSL_Schluessel.isEmpty())
+	if(SSL_Schluessel.isEmpty() && SSL_Aktiv)
 	{
 		Beenden(8,tr("Kein privater Schlüssel für das X509 Zertifikat gesetzt."));
 		return;
 	}
-	if(SSL_Kette.isEmpty())
+	if(SSL_Kette.isEmpty() && SSL_Aktiv)
 	{
 		Beenden(9,tr("Es wurde keine Zertifikatskette angegeben."));
 		return;
 	}
-	K_WebsocketServer=new WebsocketServer(this,Servername);
+	K_WebsocketServer=new WebsocketServer(this);
 	connect(K_WebsocketServer,&WebsocketServer::Fehler,this,&Steuerung::Fehler);
 	connect(K_WebsocketServer,&WebsocketServer::Initialisiert,this,&Steuerung::ServerBereit);
-	K_WebsocketServer->initialisieren(IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK,SSL_DH,SSL_Schluessel,
-									  SSL_Zertfikat,SSL_Kette);
+	K_WebsocketServer->initialisieren(Servername,IPAdresse,Anschluss,SSL_Algorithmen,SSL_EK,SSL_DH,SSL_Schluessel,
+									  SSL_Zertfikat,SSL_Kette,SSL_Aktiv);
 }
 
 void Steuerung::Fehler(const QString &text)

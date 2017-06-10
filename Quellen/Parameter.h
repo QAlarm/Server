@@ -26,6 +26,7 @@
 #define KONFIG_SERVERNAME				"Server/Servername"
 #define KONFIG_IPADRESSE				"Server/IPAdresse"
 #define KONFIG_ANSCHLUSS				"Server/Anschluss"
+#define KONFIG_SSL_AKTIV				"SSL/Aktiv"
 #define KONIFG_SSLALGORITHMEN			"SSL/Algorithmen"
 #define KONFIG_SSLEK					"SSL/EK"
 #define KONFIG_SSLZERTIFIKAT			"SSL/Zertifikat"

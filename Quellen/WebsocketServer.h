@@ -27,11 +27,11 @@ class WebsocketServer : public QObject
 {
 	Q_OBJECT
 	public:
-		explicit WebsocketServer(QObject *eltern, const QString& name);
+		explicit WebsocketServer(QObject *eltern);
 							~WebsocketServer();
-		void				initialisieren(const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
+		void				initialisieren(const QString &name, const QString &ipAdresse, const int &anschluss,const QStringList &sslAlgorithmen,
 										   const QStringList &ssl_EK, const QString &ssl_DH, const QString &zertifikatSchluessel,
-										   const QString &zertifikat, const QString &zertifkatKette);
+										   const QString &zertifikat, const QString &zertifkatKette,const bool &ssl_aktiv);
 		void				starten();
 
 	Q_SIGNALS:
